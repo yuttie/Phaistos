@@ -1,0 +1,10 @@
+canvas {
+    border: 1px dashed black;
+    padding: 0;
+}
+
+canvas:hover {
+    border: 1px solid red;
+    background-color: "#eeeeee";
+    padding: 0;
+}
