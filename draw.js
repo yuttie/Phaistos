@@ -16,6 +16,8 @@ function stroke_end() {
 }
 
 function draw_stroke(ctx, stroke, size) {
+    ctx.save();
+
     ctx.lineWidth = size;
     ctx.beginPath();
     ctx.moveTo(stroke[0][0], stroke[0][1]);
@@ -23,12 +25,18 @@ function draw_stroke(ctx, stroke, size) {
         ctx.lineTo(stroke[i][0], stroke[i][1]);
     }
     ctx.stroke();
+
+    ctx.restore();
 }
 
 function draw_point(ctx, x, y, size) {
+    ctx.save();
+
     ctx.beginPath();
     ctx.arc(x, y, size / 2, 0, 2 * Math.PI, false);
     ctx.fill();
+
+    ctx.restore();
 }
 
 function on_char_canvas_mousedown(event) {
