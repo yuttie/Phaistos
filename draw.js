@@ -1,3 +1,6 @@
+const VERSION_STRING = "0.1+";
+
+
 var stroke_object = null;
 var stroke_is_dragging = false;
 var strokes = [];
@@ -69,7 +72,15 @@ function on_char_canvas_mouseup(event) {
     stroke_end();
 }
 
+function set_title_header(event) {
+    title_header = document.getElementById("title_header")
+    title_header.innerHTML += ' <span style="font-size: small">'
+                            + "(Ver. " + VERSION_STRING + ")"
+                            + "</span>";
+}
+
 // Register event handlers
+window.addEventListener("load", set_title_header, false);
 window.addEventListener("load", registerEventListeners, false);
 function registerEventListeners(event) {
     targetElements = document.getElementsByClassName("char_canvas");
