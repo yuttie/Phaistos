@@ -72,6 +72,50 @@ function on_char_canvas_mouseup(event) {
     stroke_end();
 }
 
+function on_char_canvas_touchstart(event) {
+    if (event.touches.length == 1) {
+        canvas = event.target;
+        ctx = canvas.getContext('2d');
+
+        if (strokes.length > 0) {
+            ctx.strokeStyle = "black";
+            draw_stroke(ctx, last_stroke, 8);
+        }
+
+        stroke_begin(canvas);
+        x = event.touches[0].clientX - canvas.offsetLeft;
+        y = event.touches[0].clientY - canvas.offsetTop;
+        last_stroke.push([x, y]);
+
+        event.preventDefault();
+    }
+}
+
+function on_char_canvas_touchmove(event) {
+    if (event.touches.length == 1) {
+        if (stroke_is_dragging) {
+            x = event.touches[0].clientX - canvas.offsetLeft;
+            y = event.touches[0].clientY - canvas.offsetTop;
+            last_stroke.push([x, y]);
+
+            canvas = event.target;
+            ctx = canvas.getContext('2d');
+            ctx.strokeStyle = "red";
+            draw_stroke(ctx, last_stroke, 8);
+        }
+
+        event.preventDefault();
+    }
+}
+
+function on_char_canvas_touchend(event) {
+    if (event.touches.length == 1) {
+        stroke_end();
+
+        event.preventDefault();
+    }
+}
+
 function is_platform_mobile() {
     return Boolean(navigator.userAgent.match(/Android|iPhone|iPad/));
 }
@@ -86,14 +130,22 @@ function set_title_header(event) {
                             + "</span>";
 }
 
-// Register event handlers
-window.addEventListener("load", set_title_header, false);
-window.addEventListener("load", registerEventListeners, false);
-function registerEventListeners(event) {
-    targetElements = document.getElementsByClassName("char_canvas");
-    for (var i = 0; i < targetElements.length; ++i) {
-        targetElements[i].addEventListener("mousedown", on_char_canvas_mousedown, false);
-        targetElements[i].addEventListener("mouseup",   on_char_canvas_mouseup, false);
-        targetElements[i].addEventListener("mousemove", on_char_canvas_mousemove, false);
+function install_drawing_handlers(event) {
+    var char_canvases = document.getElementsByClassName("char_canvas");
+    for (var i = 0; i < char_canvases.length; ++i) {
+        var e = char_canvases[i];
+        if (is_platform_mobile()) {
+            e.addEventListener("touchstart", on_char_canvas_touchstart, false);
+            e.addEventListener("touchmove",  on_char_canvas_touchmove, false);
+            e.addEventListener("touchend",   on_char_canvas_touchend, false);
+        } else {
+            e.addEventListener("mousedown", on_char_canvas_mousedown, false);
+            e.addEventListener("mousemove", on_char_canvas_mousemove, false);
+            e.addEventListener("mouseup",   on_char_canvas_mouseup, false);
+        }
     }
 }
+
+// Register event handlers
+window.addEventListener("load", set_title_header, false);
+window.addEventListener("load", install_drawing_handlers, false);
