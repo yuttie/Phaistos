@@ -69,7 +69,9 @@ function on_char_canvas_mousemove(event) {
 }
 
 function on_char_canvas_mouseup(event) {
-    stroke_end();
+    if (stroke_is_dragging) {
+        stroke_end();
+    }
 }
 
 function on_char_canvas_touchstart(event) {
