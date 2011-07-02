@@ -109,7 +109,7 @@ function on_char_canvas_touchmove(event) {
 }
 
 function on_char_canvas_touchend(event) {
-    if (event.touches.length == 1) {
+    if (stroke_is_dragging) {
         stroke_end();
 
         event.preventDefault();
