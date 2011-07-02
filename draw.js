@@ -72,10 +72,17 @@ function on_char_canvas_mouseup(event) {
     stroke_end();
 }
 
+function is_platform_mobile() {
+    return Boolean(navigator.userAgent.match(/Android|iPhone|iPad/));
+}
+
 function set_title_header(event) {
+    const platform = is_platform_mobile() ? "MOBILE" : "DESKTOP";
+
     title_header = document.getElementById("title_header")
     title_header.innerHTML += ' <span style="font-size: small">'
-                            + "(Ver. " + VERSION_STRING + ")"
+                            + "(Ver. " + VERSION_STRING + ";"
+                            + " " + platform + " mode)"
                             + "</span>";
 }
 
