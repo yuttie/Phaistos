@@ -43,14 +43,19 @@ function draw_point(ctx, x, y, size) {
 }
 
 function on_char_canvas_mousedown(event) {
-    ctx = event.target.getContext('2d');
+    canvas = event.target;
+    ctx = canvas.getContext('2d');
 
+    // clear the canvas and draw the past strokes with black color
     if (strokes.length > 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.strokeStyle = "black";
-        draw_stroke(ctx, last_stroke, 8);
+        for (var i = 0; i < strokes.length; ++i) {
+            draw_stroke(ctx, strokes[i], 8);
+        }
     }
 
-    stroke_begin(event.target);
+    stroke_begin(canvas);
     x = event.offsetX
     y = event.offsetY
     last_stroke.push([x, y])
@@ -62,7 +67,8 @@ function on_char_canvas_mousemove(event) {
         y = event.offsetY
         last_stroke.push([x, y])
 
-        ctx = event.target.getContext('2d');
+        canvas = event.target;
+        ctx = canvas.getContext('2d');
         ctx.strokeStyle = "red";
         draw_stroke(ctx, last_stroke, 8);
     }
@@ -79,9 +85,13 @@ function on_char_canvas_touchstart(event) {
         canvas = event.target;
         ctx = canvas.getContext('2d');
 
+        // clear the canvas and draw the past strokes with black color
         if (strokes.length > 0) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.strokeStyle = "black";
-            draw_stroke(ctx, last_stroke, 8);
+            for (var i = 0; i < strokes.length; ++i) {
+                draw_stroke(ctx, strokes[i], 8);
+            }
         }
 
         stroke_begin(canvas);
