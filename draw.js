@@ -1,3 +1,5 @@
+"use strict";
+
 var VERSION_STRING = "0.1+";
 
 function StrokeManager() {
@@ -133,7 +135,7 @@ function is_platform_mobile() {
 function set_title_header(event) {
     var platform = is_platform_mobile() ? "MOBILE" : "DESKTOP";
 
-    title_header = document.getElementById("title_header")
+    var title_header = document.getElementById("title_header")
     title_header.innerHTML += ' <span style="font-size: small">'
                             + "(Ver. " + VERSION_STRING + ";"
                             + " " + platform + " mode)"
