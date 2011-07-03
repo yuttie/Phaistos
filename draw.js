@@ -1,4 +1,4 @@
-const VERSION_STRING = "0.1+";
+var VERSION_STRING = "0.1+";
 
 function StrokeManager() {
     var strokes_ = [];
@@ -131,7 +131,7 @@ function is_platform_mobile() {
 }
 
 function set_title_header(event) {
-    const platform = is_platform_mobile() ? "MOBILE" : "DESKTOP";
+    var platform = is_platform_mobile() ? "MOBILE" : "DESKTOP";
 
     title_header = document.getElementById("title_header")
     title_header.innerHTML += ' <span style="font-size: small">'
