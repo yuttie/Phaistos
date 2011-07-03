@@ -104,7 +104,7 @@ function on_char_canvas_mouseup(event) {
 }
 
 function on_char_canvas_touchstart(event) {
-    if (event.touches.length == 1) {
+    if (event.touches.length === 1) {
         var x = event.touches[0].clientX - event.target.offsetLeft;
         var y = event.touches[0].clientY - event.target.offsetTop;
         begin_stroke_on(event.target, x, y);
@@ -114,7 +114,7 @@ function on_char_canvas_touchstart(event) {
 }
 
 function on_char_canvas_touchmove(event) {
-    if (event.touches.length == 1) {
+    if (event.touches.length === 1) {
         var x = event.touches[0].clientX - event.target.offsetLeft;
         var y = event.touches[0].clientY - event.target.offsetTop;
         update_stroke_on(event.target, x, y);
