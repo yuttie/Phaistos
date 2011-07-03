@@ -1,103 +1,110 @@
 const VERSION_STRING = "0.1+";
 
+function StrokeManager() {
+    var strokes_ = [];
+    var is_stroking_ = false;
+    var current_stroke_ = [];
 
-var stroke_object = null;
-var stroke_is_dragging = false;
-var strokes = [];
-var last_stroke = [];
+    // stroke management
+    this.is_stroking = function() {
+        return is_stroking_;
+    };
 
-function stroke_begin(obj) {
-    stroke_object = obj;
-    stroke_is_dragging = true;
-    last_stroke = [];
-}
+    this.get_strokes = function() {
+        return strokes_.slice(0);
+    };
 
-function stroke_end() {
-    stroke_object = null;
-    stroke_is_dragging = false;
-    strokes.push(last_stroke);
-}
+    this.begin = function(x, y) {
+        current_stroke_ = [[x, y]];
+        is_stroking_ = true;
+    };
 
-function draw_stroke(ctx, stroke, size) {
-    ctx.save();
+    this.update = function(x, y) {
+        if (is_stroking_) {
+            current_stroke_.push([x, y]);
+        }
+    };
 
-    ctx.lineWidth = size;
-    ctx.beginPath();
-    ctx.moveTo(stroke[0][0], stroke[0][1]);
-    for (var i = 1; i < stroke.length; ++i) {
-        ctx.lineTo(stroke[i][0], stroke[i][1]);
+    this.end = function() {
+        if (is_stroking_) {
+            strokes_.push(current_stroke_);
+            is_stroking_ = false;
+        }
+    };
+
+    // drawing strokes
+    function draw_strokes_(ctx, strokes) {
+        ctx.beginPath();
+        for (var i = 0; i < strokes.length; ++i) {
+            var s = strokes[i];
+            ctx.moveTo(s[0][0], s[0][1]);
+            for (var j = 1; j < s.length; ++j) {
+                ctx.lineTo(s[j][0], s[j][1]);
+            }
+        }
+        ctx.stroke();
     }
-    ctx.stroke();
 
-    ctx.restore();
+    this.draw_existing_strokes = function(ctx) {
+        draw_strokes_(ctx, strokes_);
+    };
+
+    this.draw_current_stroke = function(ctx) {
+        draw_strokes_(ctx, [current_stroke_]);
+    };
 }
 
-function draw_point(ctx, x, y, size) {
-    ctx.save();
+var stroke_managers = {};
 
-    ctx.beginPath();
-    ctx.arc(x, y, size / 2, 0, 2 * Math.PI, false);
-    ctx.fill();
+function begin_stroke_on(canvas, x, y) {
+    var sm = stroke_managers[canvas.id];
+    sm.begin(x, y);
 
-    ctx.restore();
+    // clear the canvas and draw the past strokes with black color
+    var ctx = canvas.getContext('2d');
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 8;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    sm.draw_existing_strokes(ctx);
+}
+
+function update_stroke_on(canvas, x, y) {
+    var sm = stroke_managers[canvas.id];
+    if (sm.is_stroking()) {
+        sm.update(x, y);
+
+        var ctx = canvas.getContext('2d');
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 8;
+        sm.draw_current_stroke(ctx);
+    }
+}
+
+function end_stroke_on(canvas) {
+    var sm = stroke_managers[canvas.id];
+    if (sm.is_stroking()) {
+        sm.end();
+    }
 }
 
 function on_char_canvas_mousedown(event) {
-    canvas = event.target;
-    ctx = canvas.getContext('2d');
-
-    // clear the canvas and draw the past strokes with black color
-    if (strokes.length > 0) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.strokeStyle = "black";
-        for (var i = 0; i < strokes.length; ++i) {
-            draw_stroke(ctx, strokes[i], 8);
-        }
-    }
-
-    stroke_begin(canvas);
-    x = event.offsetX
-    y = event.offsetY
-    last_stroke.push([x, y])
+    begin_stroke_on(event.target, event.offsetX, event.offsetY);
 }
 
 function on_char_canvas_mousemove(event) {
-    if (stroke_is_dragging) {
-        x = event.offsetX
-        y = event.offsetY
-        last_stroke.push([x, y])
-
-        canvas = event.target;
-        ctx = canvas.getContext('2d');
-        ctx.strokeStyle = "red";
-        draw_stroke(ctx, last_stroke, 8);
-    }
+    update_stroke_on(event.target, event.offsetX, event.offsetY);
 }
 
 function on_char_canvas_mouseup(event) {
-    if (stroke_is_dragging) {
-        stroke_end();
-    }
+    end_stroke_on(event.target);
 }
 
 function on_char_canvas_touchstart(event) {
     if (event.touches.length == 1) {
-        canvas = event.target;
-        ctx = canvas.getContext('2d');
-
-        // clear the canvas and draw the past strokes with black color
-        if (strokes.length > 0) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = "black";
-            for (var i = 0; i < strokes.length; ++i) {
-                draw_stroke(ctx, strokes[i], 8);
-            }
-        }
-
-        stroke_begin(canvas);
-        x = event.touches[0].clientX - canvas.offsetLeft;
-        y = event.touches[0].clientY - canvas.offsetTop;
-        last_stroke.push([x, y]);
+        var x = event.touches[0].clientX - event.target.offsetLeft;
+        var y = event.touches[0].clientY - event.target.offsetTop;
+        begin_stroke_on(event.target, x, y);
 
         event.preventDefault();
     }
@@ -105,27 +112,18 @@ function on_char_canvas_touchstart(event) {
 
 function on_char_canvas_touchmove(event) {
     if (event.touches.length == 1) {
-        if (stroke_is_dragging) {
-            x = event.touches[0].clientX - canvas.offsetLeft;
-            y = event.touches[0].clientY - canvas.offsetTop;
-            last_stroke.push([x, y]);
-
-            canvas = event.target;
-            ctx = canvas.getContext('2d');
-            ctx.strokeStyle = "red";
-            draw_stroke(ctx, last_stroke, 8);
-        }
+        var x = event.touches[0].clientX - event.target.offsetLeft;
+        var y = event.touches[0].clientY - event.target.offsetTop;
+        update_stroke_on(event.target, x, y);
 
         event.preventDefault();
     }
 }
 
 function on_char_canvas_touchend(event) {
-    if (stroke_is_dragging) {
-        stroke_end();
+    end_stroke_on(event.target);
 
-        event.preventDefault();
-    }
+    event.preventDefault();
 }
 
 function is_platform_mobile() {
@@ -146,6 +144,7 @@ function install_drawing_handlers(event) {
     var char_canvases = document.getElementsByClassName("char_canvas");
     for (var i = 0; i < char_canvases.length; ++i) {
         var e = char_canvases[i];
+        stroke_managers[e.id] = new StrokeManager();
         if (is_platform_mobile()) {
             e.addEventListener("touchstart", on_char_canvas_touchstart, false);
             e.addEventListener("touchmove",  on_char_canvas_touchmove, false);
