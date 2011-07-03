@@ -37,10 +37,11 @@ function StrokeManager() {
     // drawing strokes
     function draw_strokes_(ctx, strokes) {
         ctx.beginPath();
-        for (var i = 0; i < strokes.length; ++i) {
+        var i, j;
+        for (i = 0; i < strokes.length; ++i) {
             var s = strokes[i];
             ctx.moveTo(s[0][0], s[0][1]);
-            for (var j = 1; j < s.length; ++j) {
+            for (j = 1; j < s.length; ++j) {
                 ctx.lineTo(s[j][0], s[j][1]);
             }
         }
@@ -144,7 +145,8 @@ function set_title_header(event) {
 
 function install_drawing_handlers(event) {
     var char_canvases = document.getElementsByClassName("char_canvas");
-    for (var i = 0; i < char_canvases.length; ++i) {
+    var i;
+    for (i = 0; i < char_canvases.length; ++i) {
         var e = char_canvases[i];
         stroke_managers[e.id] = new StrokeManager();
         if (is_platform_mobile()) {
