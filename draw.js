@@ -1,6 +1,6 @@
 "use strict";
 
-var VERSION_STRING = "0.2";
+var VERSION_STRING = "0.2+";
 
 function StrokeManager() {
     var strokes_ = [];
@@ -95,12 +95,59 @@ function end_stroke_on(canvas) {
     }
 }
 
+function get_mouse_coordinates(event) {
+    // get the coordinates where the event occurred
+    var page_x, page_y;
+    if (event.pageX || event.pageY) {
+        page_x = event.pageX;
+        page_y = event.pageY;
+    }
+    else {  // for IE
+        page_x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        page_y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    }
+
+    // get the target's coordinates relative to the page
+    var offset_left = 0;
+    var offset_top = 0;
+    var element = event.target;
+    do {
+        offset_left += element.offsetLeft;
+        offset_top  += element.offsetTop;
+    } while (element = element.offsetParent);
+
+    return [page_x - offset_left,
+            page_y - offset_top];
+}
+
+function get_touch_coordinates(event) {
+    // get the coordinates where the event occurred
+    var page_x = event.touches[0].pageX;
+    var page_y = event.touches[0].pageY;
+
+    // get the target's coordinates relative to the page
+    var offset_left = 0;
+    var offset_top = 0;
+    var element = event.target;
+    do {
+        offset_left += element.offsetLeft;
+        offset_top  += element.offsetTop;
+    } while (element = element.offsetParent);
+
+    return [page_x - offset_left,
+            page_y - offset_top];
+}
+
 function on_char_canvas_mousedown(event) {
-    begin_stroke_on(event.target, event.offsetX, event.offsetY);
+    var c = get_mouse_coordinates(event);
+    var x = c[0], y = c[1];
+    begin_stroke_on(event.target, x, y);
 }
 
 function on_char_canvas_mousemove(event) {
-    update_stroke_on(event.target, event.offsetX, event.offsetY);
+    var c = get_mouse_coordinates(event);
+    var x = c[0], y = c[1];
+    update_stroke_on(event.target, x, y);
 }
 
 function on_char_canvas_mouseup(event) {
@@ -109,8 +156,8 @@ function on_char_canvas_mouseup(event) {
 
 function on_char_canvas_touchstart(event) {
     if (event.touches.length === 1) {
-        var x = event.touches[0].clientX - event.target.offsetLeft;
-        var y = event.touches[0].clientY - event.target.offsetTop;
+        var c = get_touch_coordinates(event);
+        var x = c[0], y = c[1];
         begin_stroke_on(event.target, x, y);
 
         event.preventDefault();
@@ -119,8 +166,8 @@ function on_char_canvas_touchstart(event) {
 
 function on_char_canvas_touchmove(event) {
     if (event.touches.length === 1) {
-        var x = event.touches[0].clientX - event.target.offsetLeft;
-        var y = event.touches[0].clientY - event.target.offsetTop;
+        var c = get_touch_coordinates(event);
+        var x = c[0], y = c[1];
         update_stroke_on(event.target, x, y);
 
         event.preventDefault();
