@@ -67,6 +67,8 @@ function begin_stroke_on(canvas, x, y) {
     var ctx = canvas.getContext('2d');
     ctx.strokeStyle = "black";
     ctx.lineWidth = 8;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     sm.draw_existing_strokes(ctx);
@@ -80,6 +82,8 @@ function update_stroke_on(canvas, x, y) {
         var ctx = canvas.getContext('2d');
         ctx.strokeStyle = "red";
         ctx.lineWidth = 8;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
         sm.draw_current_stroke(ctx);
     }
 }
