@@ -1,10 +1,29 @@
 canvas {
-    border: 1px dashed black;
+    margin: 0;
     padding: 0;
 }
 
-canvas:hover {
+canvas.char_canvas {
+    margin: 8px;
+    border: 1px dashed black;
+}
+
+canvas.char_canvas:hover {
+    margin: 8px;
     border: 1px solid red;
-    background-color: "#eeeeee";
+}
+
+canvas#disc_canvas {
+    border: 2px solid black;
+}
+
+#input_area {
     padding: 0;
+    position: absolute;
+    width: 441px;
+}
+
+#output_area {
+    padding: 0;
+    margin-left: 450px;
 }
