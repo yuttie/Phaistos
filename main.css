@@ -13,22 +13,21 @@ canvas.char_canvas:hover {
     border: 1px solid red;
 }
 
-#input_area {
+#input_pane {
     padding: 0;
     position: absolute;
     width: 441px;
 }
 
-#output_area {
+#output_pane {
     padding: 0;
     margin-left: 450px;
 }
 
+/* styles common to buttons */
 button {
     width: 350px;
     height: 48px;
-    background: #9c0;
-    border: 1px solid #8a0;
     font-size: 24px;
     font-weight: bold;
     color: white;
@@ -43,7 +42,6 @@ button {
     -webkit-border-radius: 8px;
 }
 button:hover {
-    border: 1px solid #680;
     box-shadow:         0 0 4px rgba(0, 0, 0, 0.3);
     -moz-box-shadow:    0 0 4px rgba(0, 0, 0, 0.3);
     -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
@@ -53,4 +51,28 @@ button:active {
     box-shadow:         inset 1px 1px 4px rgba(0, 0, 0, 0.3);
     -moz-box-shadow:    inset 1px 1px 4px rgba(0, 0, 0, 0.3);
     -webkit-box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* normal button (green) */
+.normal_button {
+    background: #9c0;
+    border: 1px solid #8ab800;
+}
+.normal_button:hover {
+    border: 1px solid #680;
+}
+.normal_button:active {
+    background: #8ab800;
+}
+
+/* dangerous button (red) */
+.dangerous_button {
+    background: #c30;
+    border: 1px solid #b82e00;
+}
+.dangerous_button:hover {
+    border: 1px solid #820;
+}
+.dangerous_button:active {
+    background: #b82e00;
 }
