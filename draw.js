@@ -1,6 +1,6 @@
 "use strict";
 
-var VERSION_STRING = "0.3+";
+var VERSION_STRING = "0.4";
 
 function StrokeManager() {
     var strokes_ = [];
