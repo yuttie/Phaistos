@@ -1,3 +1,8 @@
+body {
+    width: 1536px;
+    height: 1024px;
+}
+
 canvas {
     margin: 0;
     padding: 0;
