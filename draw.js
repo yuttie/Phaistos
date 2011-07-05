@@ -356,6 +356,23 @@ function install_drawing_handlers(event) {
     // draw a disc
     var disc_canvas = document.getElementById("disc_canvas");
     draw_disc(disc_canvas, 30);
+
+    // view button
+    var view_button = document.getElementById("view_button");
+    view_button.addEventListener("click", function(event) {
+        var disc_canvas = document.getElementById("disc_canvas");
+        var dataUrl = disc_canvas.toDataURL("image/png");
+        window.location = dataUrl;
+    }, false);
+
+    // save button
+    var save_button = document.getElementById("save_button");
+    save_button.addEventListener("click", function(event) {
+        var disc_canvas = document.getElementById("disc_canvas");
+        var dataUrl = disc_canvas.toDataURL("image/png");
+        dataUrl = dataUrl.replace("image/png", "image/octet-stream");
+        window.location = dataUrl;
+    }, false);
 }
 
 // Register event handlers
