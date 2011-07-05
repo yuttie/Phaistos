@@ -237,22 +237,22 @@ function end_stroke_on(canvas) {
     }
 }
 
-function get_mouse_coordinates(event) {
+function get_mouse_coordinates(e) {
     // get the coordinates where the event occurred
     var page_x, page_y;
-    if (event.pageX || event.pageY) {
-        page_x = event.pageX;
-        page_y = event.pageY;
+    if (e.pageX || e.pageY) {
+        page_x = e.pageX;
+        page_y = e.pageY;
     }
     else {  // for IE
-        page_x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-        page_y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+        page_x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        page_y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
     }
 
     // get the target's coordinates relative to the page
     var offset_left = 0;
     var offset_top = 0;
-    var element = event.target;
+    var element = e.target;
     do {
         offset_left += element.offsetLeft;
         offset_top  += element.offsetTop;
@@ -262,15 +262,15 @@ function get_mouse_coordinates(event) {
             page_y - offset_top];
 }
 
-function get_touch_coordinates(event) {
+function get_touch_coordinates(e) {
     // get the coordinates where the event occurred
-    var page_x = event.touches[0].pageX;
-    var page_y = event.touches[0].pageY;
+    var page_x = e.touches[0].pageX;
+    var page_y = e.touches[0].pageY;
 
     // get the target's coordinates relative to the page
     var offset_left = 0;
     var offset_top = 0;
-    var element = event.target;
+    var element = e.target;
     do {
         offset_left += element.offsetLeft;
         offset_top  += element.offsetTop;
@@ -280,53 +280,67 @@ function get_touch_coordinates(event) {
             page_y - offset_top];
 }
 
-function on_char_canvas_mousedown(event) {
-    var c = get_mouse_coordinates(event);
+function on_char_canvas_mousedown(e) {
+    var c = get_mouse_coordinates(e);
     var x = c[0], y = c[1];
-    begin_stroke_on(event.target, x, y);
+    begin_stroke_on(e.target, x, y);
 }
 
-function on_char_canvas_mousemove(event) {
-    var c = get_mouse_coordinates(event);
+function on_char_canvas_mousemove(e) {
+    var c = get_mouse_coordinates(e);
     var x = c[0], y = c[1];
-    update_stroke_on(event.target, x, y);
+    update_stroke_on(e.target, x, y);
 }
 
-function on_char_canvas_mouseup(event) {
-    end_stroke_on(event.target);
+function on_char_canvas_mouseup(e) {
+    end_stroke_on(e.target);
 }
 
-function on_char_canvas_touchstart(event) {
-    if (event.touches.length === 1) {
-        var c = get_touch_coordinates(event);
+function on_char_canvas_touchstart(e) {
+    if (e.touches.length === 1) {
+        var c = get_touch_coordinates(e);
         var x = c[0], y = c[1];
-        begin_stroke_on(event.target, x, y);
+        begin_stroke_on(e.target, x, y);
 
-        event.preventDefault();
+        e.preventDefault();
     }
 }
 
-function on_char_canvas_touchmove(event) {
-    if (event.touches.length === 1) {
-        var c = get_touch_coordinates(event);
+function on_char_canvas_touchmove(e) {
+    if (e.touches.length === 1) {
+        var c = get_touch_coordinates(e);
         var x = c[0], y = c[1];
-        update_stroke_on(event.target, x, y);
+        update_stroke_on(e.target, x, y);
 
-        event.preventDefault();
+        e.preventDefault();
     }
 }
 
-function on_char_canvas_touchend(event) {
-    end_stroke_on(event.target);
+function on_char_canvas_touchend(e) {
+    end_stroke_on(e.target);
 
-    event.preventDefault();
+    e.preventDefault();
+}
+
+function on_view_button_clicked(e) {
+    var disc_canvas = document.getElementById("disc_canvas");
+    var dataUrl = disc_canvas.toDataURL("image/png");
+    window.location = dataUrl;
+}
+
+function on_save_button_clicked(e) {
+    var disc_canvas = document.getElementById("disc_canvas");
+    var dataUrl = disc_canvas.toDataURL("image/png");
+    dataUrl = dataUrl.replace("image/png", "image/octet-stream");
+    window.location = dataUrl;
 }
 
 function is_platform_mobile() {
     return Boolean(navigator.userAgent.match(/Android|iPhone|iPad/));
 }
 
-function set_title_header(event) {
+function on_window_loaded(e) {
+    // set title header
     var platform = is_platform_mobile() ? "MOBILE" : "DESKTOP";
 
     var title_header = document.getElementById("title_header");
@@ -334,47 +348,36 @@ function set_title_header(event) {
                             + "(Ver. " + VERSION_STRING + ";"
                             + " " + platform + " mode)"
                             + "</span>";
-}
 
-function install_drawing_handlers(event) {
+    // install stroke handlers
     var char_canvases = document.getElementsByClassName("char_canvas");
     var i;
     for (i = 0; i < char_canvases.length; ++i) {
-        var e = char_canvases[i];
-        stroke_managers[e.id] = new StrokeManager();
+        var c = char_canvases[i];
+        stroke_managers[c.id] = new StrokeManager();
         if (is_platform_mobile()) {
-            e.addEventListener("touchstart", on_char_canvas_touchstart, false);
-            e.addEventListener("touchmove",  on_char_canvas_touchmove, false);
-            e.addEventListener("touchend",   on_char_canvas_touchend, false);
+            c.addEventListener("touchstart", on_char_canvas_touchstart, false);
+            c.addEventListener("touchmove",  on_char_canvas_touchmove, false);
+            c.addEventListener("touchend",   on_char_canvas_touchend, false);
         } else {
-            e.addEventListener("mousedown", on_char_canvas_mousedown, false);
-            e.addEventListener("mousemove", on_char_canvas_mousemove, false);
-            e.addEventListener("mouseup",   on_char_canvas_mouseup, false);
+            c.addEventListener("mousedown", on_char_canvas_mousedown, false);
+            c.addEventListener("mousemove", on_char_canvas_mousemove, false);
+            c.addEventListener("mouseup",   on_char_canvas_mouseup, false);
         }
     }
+
+    // view button
+    var view_button = document.getElementById("view_button");
+    view_button.addEventListener("click", on_view_button_clicked, false);
+
+    // save button
+    var save_button = document.getElementById("save_button");
+    save_button.addEventListener("click", on_save_button_clicked, false);
 
     // draw a disc
     var disc_canvas = document.getElementById("disc_canvas");
     draw_disc(disc_canvas, 30);
-
-    // view button
-    var view_button = document.getElementById("view_button");
-    view_button.addEventListener("click", function(event) {
-        var disc_canvas = document.getElementById("disc_canvas");
-        var dataUrl = disc_canvas.toDataURL("image/png");
-        window.location = dataUrl;
-    }, false);
-
-    // save button
-    var save_button = document.getElementById("save_button");
-    save_button.addEventListener("click", function(event) {
-        var disc_canvas = document.getElementById("disc_canvas");
-        var dataUrl = disc_canvas.toDataURL("image/png");
-        dataUrl = dataUrl.replace("image/png", "image/octet-stream");
-        window.location = dataUrl;
-    }, false);
 }
 
 // Register event handlers
-window.addEventListener("load", set_title_header, false);
-window.addEventListener("load", install_drawing_handlers, false);
+window.addEventListener("load", on_window_loaded, false);
