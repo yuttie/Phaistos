@@ -16,18 +16,24 @@ canvas.char_canvas:hover {
 #input_pane {
     padding: 0;
     position: absolute;
-    width: 441px;
+    width: 470px;
+}
+
+#reset_pane {
+    padding: 0;
+    position: absolute;
+    width: 280px;
+    margin-left: 480px;
 }
 
 #output_pane {
     padding: 0;
-    margin-left: 450px;
+    margin-left: 770px;
 }
 
 /* styles common to buttons */
 button {
-    width: 350px;
-    height: 48px;
+    margin: 4px 0 4px 0;
     font-size: 24px;
     font-weight: bold;
     color: white;
@@ -75,4 +81,20 @@ button:active {
 }
 .dangerous_button:active {
     background: #b82e00;
+}
+
+/* output buttons */
+.output_button {
+    width: 370px;
+    height: 72px;
+}
+
+/* reset buttons */
+.reset_button {
+    width: 135px;
+    height: 135px;
+}
+#reset_all_button {
+    width: 278px;
+    height: 135px;
 }

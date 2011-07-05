@@ -1,6 +1,6 @@
 "use strict";
 
-var VERSION_STRING = "0.3";
+var VERSION_STRING = "0.3+";
 
 function StrokeManager() {
     var strokes_ = [];
@@ -8,6 +8,10 @@ function StrokeManager() {
     var current_stroke_ = [];
 
     // stroke management
+    this.clear = function() {
+        strokes_ = [];
+    };
+
     this.is_stroking = function() {
         return is_stroking_;
     };
@@ -322,6 +326,38 @@ function on_char_canvas_touchend(e) {
     e.preventDefault();
 }
 
+function on_reset_button_clicked(e) {
+    var button = e.target;
+    var n = button.id.substr(-1, 1);
+    var canvas_id = "char_canvas" + n;
+    var canvas = document.getElementById(canvas_id);
+
+    var sm = stroke_managers[canvas_id];
+    sm.clear();
+
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    var disc_canvas = document.getElementById("disc_canvas");
+    draw_disc(disc_canvas, 30);
+}
+
+function on_reset_all_button_clicked(e) {
+    var char_canvases = document.getElementsByClassName("char_canvas");
+    var i;
+    for (i = 0; i < char_canvases.length; ++i) {
+        var c = char_canvases[i];
+        var sm = stroke_managers[c.id];
+        sm.clear();
+
+        var ctx = c.getContext('2d');
+        ctx.clearRect(0, 0, c.width, c.height);
+    }
+
+    var disc_canvas = document.getElementById("disc_canvas");
+    draw_disc(disc_canvas, 30);
+}
+
 function on_view_button_clicked(e) {
     var disc_canvas = document.getElementById("disc_canvas");
     var dataUrl = disc_canvas.toDataURL("image/png");
@@ -365,6 +401,15 @@ function on_window_loaded(e) {
             c.addEventListener("mouseup",   on_char_canvas_mouseup, false);
         }
     }
+
+    // reset buttons
+    var reset_buttons = document.getElementsByClassName("reset_button");
+    for (i = 0; i < reset_buttons.length; ++i) {
+        var b = reset_buttons[i];
+        b.addEventListener("click", on_reset_button_clicked, false);
+    }
+    var reset_all_button = document.getElementById("reset_all_button");
+    reset_all_button.addEventListener("click", on_reset_all_button_clicked, false);
 
     // view button
     var view_button = document.getElementById("view_button");
