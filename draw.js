@@ -88,10 +88,152 @@ function update_stroke_on(canvas, x, y) {
     }
 }
 
+function draw_disc(canvas, margin) {
+    var num_directions = 8;
+
+    var ctx = canvas.getContext('2d');
+    ctx.save();
+
+    // clear
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // construct the transformation
+    ctx.translate(canvas.width / 2,
+                  canvas.height / 2);
+    ctx.scale(canvas.width / 2 - margin,
+              canvas.height / 2 - margin);
+
+    // disc's background
+    ctx.save();
+
+    ctx.beginPath();
+    ctx.arc(0, 0, 1, 0, 2 * Math.PI);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+
+    // cross-hair
+    var cross_hair_length = 0.1;
+    var cross_hair_width = 0.01;
+    ctx.save();
+
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = cross_hair_width;
+    ctx.lineCap = "round";
+
+    ctx.beginPath();
+    ctx.moveTo(-cross_hair_length / 2, 0);
+    ctx.lineTo(cross_hair_length / 2, 0);
+    ctx.moveTo(0, -cross_hair_length / 2);
+    ctx.lineTo(0, cross_hair_length / 2);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // slits
+    var slit_length = 0.2;
+    var slit_width = 0.03;
+    ctx.save();
+
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = slit_width;
+    ctx.lineCap = "butt";
+
+    var i;
+    for (i = 0; i < num_directions; ++i) {
+        ctx.save();
+
+        ctx.rotate(2 * Math.PI * i / num_directions);
+
+        ctx.beginPath();
+        ctx.moveTo(0, -1 + slit_length);
+        ctx.lineTo(0, -1);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+    ctx.restore();
+
+    // white circle
+    var circle_line_width = 0.01;
+    ctx.save();
+
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = circle_line_width;
+
+    ctx.beginPath();
+    ctx.arc(0, 0, 1 - slit_length, 0, 2 * Math.PI);
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.restore();
+
+    // strokes
+    var stroke_width = 0.01;
+    var region_size = 0.1;
+    var locations = [0, 4];
+    var top_margin = 0.05;
+    var hspace = 0.05;
+    var vspace = 0.05;
+    ctx.save();
+
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = stroke_width;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    ctx.beginPath();
+    for (i = 0; i < 8; ++i) {
+        var canvas_id = "char_canvas" + (i + 1).toString();
+        var char_canvas = document.getElementById(canvas_id);
+        var strokes = stroke_managers[canvas_id].get_strokes();
+
+        var j;
+        for (j = 0; j < strokes.length; ++j) {
+            var s = strokes[j];
+
+            var k;
+            for (k = 0; k < locations.length; ++k) {
+                ctx.save();
+
+                // a stroke region for this stroke
+                var base_x = -(region_size + hspace / 2);
+                var base_y = -1 + slit_length + top_margin;
+                var region_x = base_x + (i % 2) * (region_size + hspace);
+                var region_y = base_y + Math.floor(i / 2) * (region_size + vspace);
+
+                ctx.rotate(2 * Math.PI * (locations[k] + j) / num_directions);
+                ctx.translate(region_x, region_y);
+                ctx.scale(region_size / char_canvas.width,
+                          region_size / char_canvas.height);
+
+                // draw a stroke
+                var l;
+                ctx.moveTo(s[0][0], s[0][1]);
+                for (l = 1; l < s.length; ++l) {
+                    ctx.lineTo(s[l][0], s[l][1]);
+                }
+
+                ctx.restore();
+            }
+        }
+    }
+    ctx.stroke();
+
+    ctx.restore();
+
+    ctx.restore();
+}
+
 function end_stroke_on(canvas) {
     var sm = stroke_managers[canvas.id];
     if (sm.is_stroking()) {
         sm.end();
+
+        // draw a disc
+        var disc_canvas = document.getElementById("disc_canvas");
+        draw_disc(disc_canvas, 30);
     }
 }
 
@@ -210,6 +352,10 @@ function install_drawing_handlers(event) {
             e.addEventListener("mouseup",   on_char_canvas_mouseup, false);
         }
     }
+
+    // draw a disc
+    var disc_canvas = document.getElementById("disc_canvas");
+    draw_disc(disc_canvas, 30);
 }
 
 // Register event handlers
