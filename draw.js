@@ -1,6 +1,6 @@
 "use strict";
 
-var VERSION_STRING = "0.4";
+var VERSION_STRING = "0.4+";
 
 function StrokeManager() {
     var strokes_ = [];
@@ -358,17 +358,24 @@ function on_reset_all_button_clicked(e) {
     draw_disc(disc_canvas, 30);
 }
 
+function create_disc_image(size_in_mm, dpi) {
+    // 1 inch := 25.4 mm
+    var size = size_in_mm * dpi / 25.4;
+    var canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    draw_disc(canvas, 0);
+    return canvas.toDataURL("image/png");
+}
+
 function on_view_button_clicked(e) {
-    var disc_canvas = document.getElementById("disc_canvas");
-    var dataUrl = disc_canvas.toDataURL("image/png");
+    var dataUrl = create_disc_image(100, 600);
     window.location = dataUrl;
 }
 
 function on_save_button_clicked(e) {
-    var disc_canvas = document.getElementById("disc_canvas");
-    var dataUrl = disc_canvas.toDataURL("image/png");
-    dataUrl = dataUrl.replace("image/png", "image/octet-stream");
-    window.location = dataUrl;
+    var dataUrl = create_disc_image(100, 600);
+    window.location = dataUrl.replace("image/png", "image/octet-stream");
 }
 
 function is_platform_mobile() {
