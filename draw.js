@@ -2,6 +2,11 @@
 
 var VERSION_STRING = "0.4+";
 
+var STROKE_WIDTH = 8;         // px
+var OUTPUT_DISC_SIZE = 100;   // diameter in mm
+var OUTPUT_DPI = 600;         // dpi
+var DISC_CANVAS_MARGIN = 30;  // px
+
 function StrokeManager() {
     var strokes_ = [];
     var is_stroking_ = false;
@@ -70,7 +75,7 @@ function begin_stroke_on(canvas, x, y) {
     // clear the canvas and draw the past strokes with black color
     var ctx = canvas.getContext('2d');
     ctx.strokeStyle = "black";
-    ctx.lineWidth = 8;
+    ctx.lineWidth = STROKE_WIDTH;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
@@ -85,7 +90,7 @@ function update_stroke_on(canvas, x, y) {
 
         var ctx = canvas.getContext('2d');
         ctx.strokeStyle = "red";
-        ctx.lineWidth = 8;
+        ctx.lineWidth = STROKE_WIDTH;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
         sm.draw_current_stroke(ctx);
@@ -93,7 +98,7 @@ function update_stroke_on(canvas, x, y) {
 }
 
 function draw_disc(canvas, margin) {
-    var num_directions = 8;
+    var NUM_DIRECTIONS = 8;
 
     var ctx = canvas.getContext('2d');
     ctx.save();
@@ -118,40 +123,40 @@ function draw_disc(canvas, margin) {
     ctx.restore();
 
     // cross-hair
-    var cross_hair_length = 0.1;
-    var cross_hair_width = 0.01;
+    var CROSS_HAIR_LENGTH = 0.1;
+    var CROSS_HAIR_WIDTH = 0.01;
     ctx.save();
 
     ctx.strokeStyle = "white";
-    ctx.lineWidth = cross_hair_width;
+    ctx.lineWidth = CROSS_HAIR_WIDTH;
     ctx.lineCap = "round";
 
     ctx.beginPath();
-    ctx.moveTo(-cross_hair_length / 2, 0);
-    ctx.lineTo(cross_hair_length / 2, 0);
-    ctx.moveTo(0, -cross_hair_length / 2);
-    ctx.lineTo(0, cross_hair_length / 2);
+    ctx.moveTo(-CROSS_HAIR_LENGTH / 2, 0);
+    ctx.lineTo(CROSS_HAIR_LENGTH / 2, 0);
+    ctx.moveTo(0, -CROSS_HAIR_LENGTH / 2);
+    ctx.lineTo(0, CROSS_HAIR_LENGTH / 2);
     ctx.stroke();
 
     ctx.restore();
 
     // slits
-    var slit_length = 0.2;
-    var slit_width = 0.03;
+    var SLIT_LENGTH = 0.2;
+    var SLIT_WIDTH = 0.03;
     ctx.save();
 
     ctx.strokeStyle = "white";
-    ctx.lineWidth = slit_width;
+    ctx.lineWidth = SLIT_WIDTH;
     ctx.lineCap = "butt";
 
     var i;
-    for (i = 0; i < num_directions; ++i) {
+    for (i = 0; i < NUM_DIRECTIONS; ++i) {
         ctx.save();
 
-        ctx.rotate(2 * Math.PI * i / num_directions);
+        ctx.rotate(2 * Math.PI * i / NUM_DIRECTIONS);
 
         ctx.beginPath();
-        ctx.moveTo(0, -1 + slit_length);
+        ctx.moveTo(0, -1 + SLIT_LENGTH);
         ctx.lineTo(0, -1);
         ctx.stroke();
 
@@ -160,30 +165,30 @@ function draw_disc(canvas, margin) {
     ctx.restore();
 
     // white circle
-    var circle_line_width = 0.01;
+    var CIRCLE_LINE_WIDTH = 0.01;
     ctx.save();
 
     ctx.strokeStyle = "white";
-    ctx.lineWidth = circle_line_width;
+    ctx.lineWidth = CIRCLE_LINE_WIDTH;
 
     ctx.beginPath();
-    ctx.arc(0, 0, 1 - slit_length, 0, 2 * Math.PI);
+    ctx.arc(0, 0, 1 - SLIT_LENGTH, 0, 2 * Math.PI);
     ctx.closePath();
     ctx.stroke();
 
     ctx.restore();
 
     // strokes
-    var stroke_width = 0.01;
-    var region_size = 0.1;
-    var locations = [0, 4];
-    var top_margin = 0.05;
-    var hspace = 0.05;
-    var vspace = 0.05;
+    var STROKE_WIDTH = 0.01;
+    var REGION_SIZE = 0.1;
+    var LOCATIONS = [0, 4];
+    var TOP_MARGIN = 0.05;
+    var HSPACE = 0.05;
+    var VSPACE = 0.05;
     ctx.save();
 
     ctx.strokeStyle = "white";
-    ctx.lineWidth = stroke_width;
+    ctx.lineWidth = STROKE_WIDTH;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
@@ -198,19 +203,19 @@ function draw_disc(canvas, margin) {
             var s = strokes[j];
 
             var k;
-            for (k = 0; k < locations.length; ++k) {
+            for (k = 0; k < LOCATIONS.length; ++k) {
                 ctx.save();
 
                 // a stroke region for this stroke
-                var base_x = -(region_size + hspace / 2);
-                var base_y = -1 + slit_length + top_margin;
-                var region_x = base_x + (i % 2) * (region_size + hspace);
-                var region_y = base_y + Math.floor(i / 2) * (region_size + vspace);
+                var base_x = -(REGION_SIZE + HSPACE / 2);
+                var base_y = -1 + SLIT_LENGTH + TOP_MARGIN;
+                var region_x = base_x + (i % 2) * (REGION_SIZE + HSPACE);
+                var region_y = base_y + Math.floor(i / 2) * (REGION_SIZE + VSPACE);
 
-                ctx.rotate(2 * Math.PI * (locations[k] + j) / num_directions);
+                ctx.rotate(2 * Math.PI * (LOCATIONS[k] + j) / NUM_DIRECTIONS);
                 ctx.translate(region_x, region_y);
-                ctx.scale(region_size / char_canvas.width,
-                          region_size / char_canvas.height);
+                ctx.scale(REGION_SIZE / char_canvas.width,
+                          REGION_SIZE / char_canvas.height);
 
                 // draw a stroke
                 var l;
@@ -237,7 +242,7 @@ function end_stroke_on(canvas) {
 
         // draw a disc
         var disc_canvas = document.getElementById("disc_canvas");
-        draw_disc(disc_canvas, 30);
+        draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
     }
 }
 
@@ -339,7 +344,7 @@ function on_reset_button_clicked(e) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     var disc_canvas = document.getElementById("disc_canvas");
-    draw_disc(disc_canvas, 30);
+    draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
 }
 
 function on_reset_all_button_clicked(e) {
@@ -355,7 +360,7 @@ function on_reset_all_button_clicked(e) {
     }
 
     var disc_canvas = document.getElementById("disc_canvas");
-    draw_disc(disc_canvas, 30);
+    draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
 }
 
 function create_disc_image(size_in_mm, dpi) {
@@ -369,12 +374,12 @@ function create_disc_image(size_in_mm, dpi) {
 }
 
 function on_view_button_clicked(e) {
-    var dataUrl = create_disc_image(100, 600);
+    var dataUrl = create_disc_image(OUTPUT_DISC_SIZE, OUTPUT_DPI);
     window.location = dataUrl;
 }
 
 function on_save_button_clicked(e) {
-    var dataUrl = create_disc_image(100, 600);
+    var dataUrl = create_disc_image(OUTPUT_DISC_SIZE, OUTPUT_DPI);
     window.location = dataUrl.replace("image/png", "image/octet-stream");
 }
 
@@ -428,7 +433,7 @@ function on_window_loaded(e) {
 
     // draw a disc
     var disc_canvas = document.getElementById("disc_canvas");
-    draw_disc(disc_canvas, 30);
+    draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
 }
 
 // Register event handlers
