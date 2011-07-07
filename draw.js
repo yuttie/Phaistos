@@ -179,9 +179,27 @@ function draw_disc(canvas, margin) {
     ctx.restore();
 
     // strokes
+    function choose_n(n, k) {
+        var i;
+
+        var a = new Array(n);
+        for (i = 0; i < n; ++i) {
+            a[i] = i;
+        }
+
+        for (i = 0; i < n; ++i) {
+            var j = Math.floor(Math.random() * (n - i) + i);
+            var tmp = a[j];
+            a[j] = a[i];
+            a[i] = tmp;
+        }
+
+        return a.slice(0, k);
+    }
+
     var STROKE_WIDTH = 0.01;
     var REGION_SIZE = 0.1;
-    var LOCATIONS = [0, 4];
+    var NUM_PLACEMENTS = 2;
     var TOP_MARGIN = 0.03;
     var HSPACE = 0.03;
     var VSPACE = 0.03;
@@ -202,8 +220,9 @@ function draw_disc(canvas, margin) {
         for (j = 0; j < strokes.length; ++j) {
             var s = strokes[j];
 
+            var placements = choose_n(NUM_DIRECTIONS, NUM_PLACEMENTS);
             var k;
-            for (k = 0; k < LOCATIONS.length; ++k) {
+            for (k = 0; k < placements.length; ++k) {
                 ctx.save();
 
                 // a stroke region for this stroke
@@ -212,7 +231,7 @@ function draw_disc(canvas, margin) {
                 var region_x = base_x + (i % 2) * (REGION_SIZE + HSPACE);
                 var region_y = base_y + Math.floor(i / 2) * (REGION_SIZE + VSPACE);
 
-                ctx.rotate(2 * Math.PI * (LOCATIONS[k] + j) / NUM_DIRECTIONS);
+                ctx.rotate(2 * Math.PI * (placements[k] + j) / NUM_DIRECTIONS);
                 ctx.translate(region_x, region_y);
                 ctx.scale(REGION_SIZE / char_canvas.width,
                           REGION_SIZE / char_canvas.height);
