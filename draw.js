@@ -225,7 +225,12 @@ function draw_disc(canvas, margin) {
             // placement
             var placements;
             if (place_in_order) {
-                placements = [0 + j, Math.floor(NUM_DIRECTIONS / 2) + j];
+                placements = [];
+                var m;
+                for (m = 0; m < NUM_PLACEMENTS; ++m) {
+                    placements.push(
+                        Math.floor(NUM_DIRECTIONS * m / NUM_PLACEMENTS) + j);
+                }
             }
             else {
                 placements = choose_n(NUM_DIRECTIONS, NUM_PLACEMENTS);
