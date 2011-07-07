@@ -182,9 +182,9 @@ function draw_disc(canvas, margin) {
     var STROKE_WIDTH = 0.01;
     var REGION_SIZE = 0.1;
     var LOCATIONS = [0, 4];
-    var TOP_MARGIN = 0.05;
-    var HSPACE = 0.05;
-    var VSPACE = 0.05;
+    var TOP_MARGIN = 0.03;
+    var HSPACE = 0.03;
+    var VSPACE = 0.03;
     ctx.save();
 
     ctx.strokeStyle = "white";
