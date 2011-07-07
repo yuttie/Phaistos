@@ -7,6 +7,8 @@ var OUTPUT_DISC_SIZE = 100;   // diameter in mm
 var OUTPUT_DPI = 600;         // dpi
 var DISC_CANVAS_MARGIN = 30;  // px
 
+var place_in_order = true;
+
 function StrokeManager() {
     var strokes_ = [];
     var is_stroking_ = false;
@@ -220,7 +222,15 @@ function draw_disc(canvas, margin) {
         for (j = 0; j < strokes.length; ++j) {
             var s = strokes[j];
 
-            var placements = choose_n(NUM_DIRECTIONS, NUM_PLACEMENTS);
+            // placement
+            var placements;
+            if (place_in_order) {
+                placements = [0 + j, Math.floor(NUM_DIRECTIONS / 2) + j];
+            }
+            else {
+                placements = choose_n(NUM_DIRECTIONS, NUM_PLACEMENTS);
+            }
+
             var k;
             for (k = 0; k < placements.length; ++k) {
                 ctx.save();
@@ -231,7 +241,7 @@ function draw_disc(canvas, margin) {
                 var region_x = base_x + (i % 2) * (REGION_SIZE + HSPACE);
                 var region_y = base_y + Math.floor(i / 2) * (REGION_SIZE + VSPACE);
 
-                ctx.rotate(2 * Math.PI * (placements[k] + j) / NUM_DIRECTIONS);
+                ctx.rotate(2 * Math.PI * placements[k] / NUM_DIRECTIONS);
                 ctx.translate(region_x, region_y);
                 ctx.scale(REGION_SIZE / char_canvas.width,
                           REGION_SIZE / char_canvas.height);
@@ -382,6 +392,34 @@ function on_reset_all_button_clicked(e) {
     draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
 }
 
+function on_ordering_button_clicked(e) {
+    place_in_order = true;
+
+    var ordering_button = document.getElementById("ordering_button");
+    var randomize_button = document.getElementById("randomize_button");
+    ordering_button.classList.add("placement_toggle_on");
+    ordering_button.classList.remove("placement_toggle_off");
+    randomize_button.classList.add("placement_toggle_off");
+    randomize_button.classList.remove("placement_toggle_on");
+
+    var disc_canvas = document.getElementById("disc_canvas");
+    draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
+}
+
+function on_randomize_button_clicked(e) {
+    place_in_order = false;
+
+    var ordering_button = document.getElementById("ordering_button");
+    var randomize_button = document.getElementById("randomize_button");
+    ordering_button.classList.add("placement_toggle_off");
+    ordering_button.classList.remove("placement_toggle_on");
+    randomize_button.classList.add("placement_toggle_on");
+    randomize_button.classList.remove("placement_toggle_off");
+
+    var disc_canvas = document.getElementById("disc_canvas");
+    draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
+}
+
 function create_disc_image(size_in_mm, dpi) {
     // 1 inch := 25.4 mm
     var size = size_in_mm * dpi / 25.4;
@@ -441,6 +479,14 @@ function on_window_loaded(e) {
     }
     var reset_all_button = document.getElementById("reset_all_button");
     reset_all_button.addEventListener("click", on_reset_all_button_clicked, false);
+
+    // ordering button
+    var ordering_button = document.getElementById("ordering_button");
+    ordering_button.addEventListener("click", on_ordering_button_clicked, false);
+
+    // randomize button
+    var randomize_button = document.getElementById("randomize_button");
+    randomize_button.addEventListener("click", on_randomize_button_clicked, false);
 
     // view button
     var view_button = document.getElementById("view_button");

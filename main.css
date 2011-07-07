@@ -62,7 +62,6 @@ button:hover {
     -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
 button:active {
-    background: #90c200;
     box-shadow:         inset 1px 1px 4px rgba(0, 0, 0, 0.3);
     -moz-box-shadow:    inset 1px 1px 4px rgba(0, 0, 0, 0.3);
     -webkit-box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.3);
@@ -90,6 +89,34 @@ button:active {
 }
 .dangerous_button:active {
     background: #b82e00;
+}
+
+/* placement order buttons */
+.placement_toggle_on {
+    background: #008ab8;
+    border: 1px solid #008ab8;
+    box-shadow:         inset 1px 1px 4px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow:    inset 1px 1px 4px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.3);
+}
+.placement_toggle_on:hover {
+    border: 1px solid #068;
+    box-shadow:         0 0 4px rgba(0, 0, 0, 0.3), inset 1px 1px 4px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow:    0 0 4px rgba(0, 0, 0, 0.3), inset 1px 1px 4px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.3), inset 1px 1px 4px rgba(0, 0, 0, 0.3);
+}
+.placement_toggle_on:active {
+    background: #008ab8;
+}
+.placement_toggle_off {
+    background: #09c;
+    border: 1px solid #008ab8;
+}
+.placement_toggle_off:hover {
+    border: 1px solid #068;
+}
+.placement_toggle_off:active {
+    background: #008ab8;
 }
 
 /* output buttons */
