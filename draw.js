@@ -8,6 +8,8 @@ var OUTPUT_DPI = 600;         // dpi
 var DISC_CANVAS_MARGIN = 30;  // px
 
 var place_in_order = true;
+var mt = new MersenneTwister19937();
+var current_seed = 0;
 
 function StrokeManager() {
     var strokes_ = [];
@@ -181,6 +183,7 @@ function draw_disc(canvas, margin) {
     ctx.restore();
 
     // strokes
+    mt.init_genrand(current_seed);
     function choose_n(n, k) {
         var i;
 
@@ -190,7 +193,7 @@ function draw_disc(canvas, margin) {
         }
 
         for (i = 0; i < n; ++i) {
-            var j = Math.floor(Math.random() * (n - i) + i);
+            var j = Math.floor(mt.genrand_real2() * (n - i) + i);
             var tmp = a[j];
             a[j] = a[i];
             a[i] = tmp;
@@ -413,6 +416,7 @@ function on_ordering_button_clicked(e) {
 
 function on_randomize_button_clicked(e) {
     place_in_order = false;
+    current_seed = mt.genrand_int32();
 
     var ordering_button = document.getElementById("ordering_button");
     var randomize_button = document.getElementById("randomize_button");
