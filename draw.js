@@ -362,18 +362,27 @@ function calc_angular_velocity(angle_history) {
 }
 
 function on_disc_canvas_mousedown(e) {
-    is_touching = true;
-
-    // stop the rotation of the disc
-    start_disc_angle = disc_angle;
-    angular_velocity = 0;
-
-    // record the current disc's angle needed later
     var c = get_mouse_coordinates(e);
     var x = c[0], y = c[1];
-    var a = calc_angle(e.target, x, y);
-    start_grab_angle = a;
-    current_grab_angle = a;
+    var disc_canvas = e.target;
+    var cx = disc_canvas.width / 2;
+    var cy = disc_canvas.height / 2;
+
+    var disc_radius = (disc_canvas.width - 2 * DISC_CANVAS_MARGIN) / 2;
+    if (Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy)) < disc_radius) {
+        is_touching = true;
+
+        // stop the rotation of the disc
+        start_disc_angle = disc_angle;
+        angular_velocity = 0;
+
+        // record the current disc's angle needed later
+        var c = get_mouse_coordinates(e);
+        var x = c[0], y = c[1];
+        var a = calc_angle(e.target, x, y);
+        start_grab_angle = a;
+        current_grab_angle = a;
+    }
 }
 
 function on_disc_canvas_mousemove(e) {
@@ -398,20 +407,29 @@ function on_disc_canvas_mouseup(e) {
 
 function on_disc_canvas_touchstart(e) {
     if (e.touches.length === 1) {
-        is_touching = true;
-
-        // stop the rotation of the disc
-        start_disc_angle = disc_angle;
-        angular_velocity = 0;
-
-        // record the current disc's angle needed later
         var c = get_touch_coordinates(e);
         var x = c[0], y = c[1];
-        var a = calc_angle(e.target, x, y);
-        start_grab_angle = a;
-        current_grab_angle = a;
+        var disc_canvas = e.target;
+        var cx = disc_canvas.width / 2;
+        var cy = disc_canvas.height / 2;
 
-        e.preventDefault();
+        var disc_radius = (disc_canvas.width - 2 * DISC_CANVAS_MARGIN) / 2;
+        if (Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy)) < disc_radius) {
+            is_touching = true;
+
+            // stop the rotation of the disc
+            start_disc_angle = disc_angle;
+            angular_velocity = 0;
+
+            // record the current disc's angle needed later
+            var c = get_touch_coordinates(e);
+            var x = c[0], y = c[1];
+            var a = calc_angle(e.target, x, y);
+            start_grab_angle = a;
+            current_grab_angle = a;
+
+            e.preventDefault();
+        }
     }
 }
 
@@ -426,9 +444,9 @@ function on_disc_canvas_touchmove(e) {
 
             var disc_canvas = document.getElementById("disc_canvas");
             draw_disc(disc_canvas, DISC_CANVAS_MARGIN, disc_angle);
-        }
 
-        e.preventDefault();
+            e.preventDefault();
+        }
     }
 }
 
@@ -436,9 +454,9 @@ function on_disc_canvas_touchend(e) {
     if (is_touching) {
         is_touching = false;
         angular_velocity = calc_angular_velocity(grab_angle_history);
-    }
 
-    e.preventDefault();
+        e.preventDefault();
+    }
 }
 
 function on_reset_button_clicked(e) {
