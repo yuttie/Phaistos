@@ -383,6 +383,9 @@ function on_disc_canvas_mousemove(e) {
         current_grab_angle = calc_angle(e.target, x, y);
 
         disc_angle = start_disc_angle + (current_grab_angle - start_grab_angle);
+
+        var disc_canvas = document.getElementById("disc_canvas");
+        draw_disc(disc_canvas, DISC_CANVAS_MARGIN, disc_angle);
     }
 }
 
@@ -420,6 +423,9 @@ function on_disc_canvas_touchmove(e) {
             current_grab_angle = calc_angle(e.target, x, y);
 
             disc_angle = start_disc_angle + (current_grab_angle - start_grab_angle);
+
+            var disc_canvas = document.getElementById("disc_canvas");
+            draw_disc(disc_canvas, DISC_CANVAS_MARGIN, disc_angle);
         }
 
         e.preventDefault();
@@ -566,6 +572,8 @@ window.setInterval(function() {
 }, 1000 / 100);
 
 window.setInterval(function() {
-    var disc_canvas = document.getElementById("disc_canvas");
-    draw_disc(disc_canvas, DISC_CANVAS_MARGIN, disc_angle);
+    if (angular_velocity !== 0) {
+        var disc_canvas = document.getElementById("disc_canvas");
+        draw_disc(disc_canvas, DISC_CANVAS_MARGIN, disc_angle);
+    }
 }, 1000 / 60);
