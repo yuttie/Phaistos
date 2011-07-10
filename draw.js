@@ -7,6 +7,14 @@ var OUTPUT_DISC_SIZE = 100;   // diameter in mm
 var OUTPUT_DPI = 600;         // dpi
 var DISC_CANVAS_MARGIN = 30;  // px
 
+var is_touching = false;
+var disc_angle = 0;
+var angular_velocity = 0;
+var start_disc_angle;
+var start_grab_angle;
+var current_grab_angle;
+var grab_angle_history = [];
+
 function StrokeManager() {
     var strokes_ = [];
     var is_stroking_ = false;
@@ -97,7 +105,7 @@ function update_stroke_on(canvas, x, y) {
     }
 }
 
-function draw_disc(canvas, margin) {
+function draw_disc(canvas, margin, angle) {
     var NUM_DIRECTIONS = 8;
 
     var ctx = canvas.getContext('2d');
@@ -111,6 +119,7 @@ function draw_disc(canvas, margin) {
                   canvas.height / 2);
     ctx.scale(canvas.width / 2 - margin,
               canvas.height / 2 - margin);
+    ctx.rotate(angle);
 
     // disc's background
     ctx.save();
@@ -242,7 +251,7 @@ function end_stroke_on(canvas) {
 
         // draw a disc
         var disc_canvas = document.getElementById("disc_canvas");
-        draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
+        draw_disc(disc_canvas, DISC_CANVAS_MARGIN, disc_angle);
     }
 }
 
@@ -331,6 +340,101 @@ function on_char_canvas_touchend(e) {
     e.preventDefault();
 }
 
+function calc_angle(canvas, x, y) {
+    return Math.atan2(y - canvas.height / 2,
+                      x - canvas.width / 2);
+}
+
+function calc_angular_velocity(angle_history) {
+    if (angle_history.length >= 2) {
+        // calculate an average angular velocity
+        var sum_velocity = 0;
+        var i;
+        for (i = 1; i < grab_angle_history.length; ++i) {
+            sum_velocity += grab_angle_history[i] - grab_angle_history[i - 1];
+        }
+
+        return sum_velocity / (grab_angle_history.length - 1);
+    }
+    else {
+        return 0;
+    }
+}
+
+function on_disc_canvas_mousedown(e) {
+    is_touching = true;
+
+    // stop the rotation of the disc
+    start_disc_angle = disc_angle;
+    angular_velocity = 0;
+
+    // record the current disc's angle needed later
+    var c = get_mouse_coordinates(e);
+    var x = c[0], y = c[1];
+    var a = calc_angle(e.target, x, y);
+    start_grab_angle = a;
+    current_grab_angle = a;
+}
+
+function on_disc_canvas_mousemove(e) {
+    if (is_touching) {
+        var c = get_mouse_coordinates(e);
+        var x = c[0], y = c[1];
+        current_grab_angle = calc_angle(e.target, x, y);
+
+        disc_angle = start_disc_angle + (current_grab_angle - start_grab_angle);
+    }
+}
+
+function on_disc_canvas_mouseup(e) {
+    if (is_touching) {
+        is_touching = false;
+        angular_velocity = calc_angular_velocity(grab_angle_history);
+    }
+}
+
+function on_disc_canvas_touchstart(e) {
+    if (e.touches.length === 1) {
+        is_touching = true;
+
+        // stop the rotation of the disc
+        start_disc_angle = disc_angle;
+        angular_velocity = 0;
+
+        // record the current disc's angle needed later
+        var c = get_touch_coordinates(e);
+        var x = c[0], y = c[1];
+        var a = calc_angle(e.target, x, y);
+        start_grab_angle = a;
+        current_grab_angle = a;
+
+        e.preventDefault();
+    }
+}
+
+function on_disc_canvas_touchmove(e) {
+    if (e.touches.length === 1) {
+        if (is_touching) {
+            var c = get_touch_coordinates(e);
+            var x = c[0], y = c[1];
+            current_grab_angle = calc_angle(e.target, x, y);
+
+            disc_angle = start_disc_angle + (current_grab_angle - start_grab_angle);
+        }
+
+        e.preventDefault();
+    }
+}
+
+function on_disc_canvas_touchend(e) {
+    if (is_touching) {
+        is_touching = false;
+        angular_velocity = calc_angular_velocity(grab_angle_history);
+    }
+
+    e.preventDefault();
+}
+
 function on_reset_button_clicked(e) {
     var button = e.target;
     var n = button.id.substr(-1, 1);
@@ -344,7 +448,7 @@ function on_reset_button_clicked(e) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     var disc_canvas = document.getElementById("disc_canvas");
-    draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
+    draw_disc(disc_canvas, DISC_CANVAS_MARGIN, disc_angle);
 }
 
 function on_reset_all_button_clicked(e) {
@@ -360,7 +464,7 @@ function on_reset_all_button_clicked(e) {
     }
 
     var disc_canvas = document.getElementById("disc_canvas");
-    draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
+    draw_disc(disc_canvas, DISC_CANVAS_MARGIN, disc_angle);
 }
 
 function create_disc_image(size_in_mm, dpi) {
@@ -369,7 +473,7 @@ function create_disc_image(size_in_mm, dpi) {
     var canvas = document.createElement("canvas");
     canvas.width = size;
     canvas.height = size;
-    draw_disc(canvas, 0);
+    draw_disc(canvas, 0, 0);
     return canvas.toDataURL("image/png");
 }
 
@@ -414,6 +518,17 @@ function on_window_loaded(e) {
         }
     }
 
+    var disc_canvas = document.getElementById("disc_canvas");
+    if (is_platform_mobile()) {
+        disc_canvas.addEventListener("touchstart", on_disc_canvas_touchstart, false);
+        disc_canvas.addEventListener("touchmove",  on_disc_canvas_touchmove, false);
+        disc_canvas.addEventListener("touchend",   on_disc_canvas_touchend, false);
+    } else {
+        disc_canvas.addEventListener("mousedown", on_disc_canvas_mousedown, false);
+        disc_canvas.addEventListener("mousemove", on_disc_canvas_mousemove, false);
+        disc_canvas.addEventListener("mouseup",   on_disc_canvas_mouseup, false);
+    }
+
     // reset buttons
     var reset_buttons = document.getElementsByClassName("reset_button");
     for (i = 0; i < reset_buttons.length; ++i) {
@@ -432,9 +547,25 @@ function on_window_loaded(e) {
     save_button.addEventListener("click", on_save_button_clicked, false);
 
     // draw a disc
-    var disc_canvas = document.getElementById("disc_canvas");
-    draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
+    draw_disc(disc_canvas, DISC_CANVAS_MARGIN, disc_angle);
 }
 
 // Register event handlers
 window.addEventListener("load", on_window_loaded, false);
+
+// for interactive animation
+window.setInterval(function() {
+    if (is_touching) {
+        grab_angle_history.push(current_grab_angle);
+        // keep the only last history of 100 ms
+        grab_angle_history = grab_angle_history.slice(-10);
+    }
+    else {
+        disc_angle += angular_velocity;
+    }
+}, 1000 / 100);
+
+window.setInterval(function() {
+    var disc_canvas = document.getElementById("disc_canvas");
+    draw_disc(disc_canvas, DISC_CANVAS_MARGIN, disc_angle);
+}, 1000 / 60);
