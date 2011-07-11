@@ -7,7 +7,13 @@ var OUTPUT_DISC_SIZE = 100;   // diameter in mm
 var OUTPUT_DPI = 600;         // dpi
 var DISC_CANVAS_MARGIN = 30;  // px
 
+// automatic hashing of strokes
 var max_stroke_length = 100;  // px
+
+// random placements of strokes
+var place_in_order = true;
+var mt = new MersenneTwister19937();
+var current_seed = 0;
 
 function StrokeManager() {
     var strokes_ = [];
@@ -205,9 +211,28 @@ function draw_disc(canvas, margin) {
     ctx.restore();
 
     // strokes
+    mt.init_genrand(current_seed);
+    function choose_n(n, k) {
+        var i;
+
+        var a = new Array(n);
+        for (i = 0; i < n; ++i) {
+            a[i] = i;
+        }
+
+        for (i = 0; i < n; ++i) {
+            var j = Math.floor(mt.genrand_real2() * (n - i) + i);
+            var tmp = a[j];
+            a[j] = a[i];
+            a[i] = tmp;
+        }
+
+        return a.slice(0, k);
+    }
+
     var STROKE_WIDTH = 0.01;
     var REGION_SIZE = 0.1;
-    var LOCATIONS = [0, 4];
+    var NUM_PLACEMENTS = 2;
     var TOP_MARGIN = 0.03;
     var HSPACE = 0.03;
     var VSPACE = 0.03;
@@ -229,8 +254,22 @@ function draw_disc(canvas, margin) {
         for (j = 0; j < strokes.length; ++j) {
             var s = strokes[j];
 
+            // placement
+            var placements;
+            if (place_in_order) {
+                placements = [];
+                var m;
+                for (m = 0; m < NUM_PLACEMENTS; ++m) {
+                    placements.push(
+                        Math.floor(NUM_DIRECTIONS * m / NUM_PLACEMENTS) + j);
+                }
+            }
+            else {
+                placements = choose_n(NUM_DIRECTIONS, NUM_PLACEMENTS);
+            }
+
             var k;
-            for (k = 0; k < LOCATIONS.length; ++k) {
+            for (k = 0; k < placements.length; ++k) {
                 ctx.save();
 
                 // a stroke region for this stroke
@@ -239,7 +278,7 @@ function draw_disc(canvas, margin) {
                 var region_x = base_x + (i % 2) * (REGION_SIZE + HSPACE);
                 var region_y = base_y + Math.floor(i / 2) * (REGION_SIZE + VSPACE);
 
-                ctx.rotate(2 * Math.PI * (LOCATIONS[k] + j) / NUM_DIRECTIONS);
+                ctx.rotate(2 * Math.PI * placements[k] / NUM_DIRECTIONS);
                 ctx.translate(region_x, region_y);
                 ctx.scale(REGION_SIZE / char_canvas.width,
                           REGION_SIZE / char_canvas.height);
@@ -390,6 +429,35 @@ function on_reset_all_button_clicked(e) {
     draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
 }
 
+function on_ordering_button_clicked(e) {
+    place_in_order = true;
+
+    var ordering_button = document.getElementById("ordering_button");
+    var randomize_button = document.getElementById("randomize_button");
+    ordering_button.classList.add("placement_toggle_on");
+    ordering_button.classList.remove("placement_toggle_off");
+    randomize_button.classList.add("placement_toggle_off");
+    randomize_button.classList.remove("placement_toggle_on");
+
+    var disc_canvas = document.getElementById("disc_canvas");
+    draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
+}
+
+function on_randomize_button_clicked(e) {
+    place_in_order = false;
+    current_seed = mt.genrand_int32();
+
+    var ordering_button = document.getElementById("ordering_button");
+    var randomize_button = document.getElementById("randomize_button");
+    ordering_button.classList.add("placement_toggle_off");
+    ordering_button.classList.remove("placement_toggle_on");
+    randomize_button.classList.add("placement_toggle_on");
+    randomize_button.classList.remove("placement_toggle_off");
+
+    var disc_canvas = document.getElementById("disc_canvas");
+    draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
+}
+
 function create_disc_image(size_in_mm, dpi) {
     // 1 inch := 25.4 mm
     var size = size_in_mm * dpi / 25.4;
@@ -471,6 +539,14 @@ function on_window_loaded(e) {
     // lengthen button
     var lengthen_button = document.getElementById("lengthen_button");
     lengthen_button.addEventListener("click", on_lengthen_button_clicked, false);
+
+    // ordering button
+    var ordering_button = document.getElementById("ordering_button");
+    ordering_button.addEventListener("click", on_ordering_button_clicked, false);
+
+    // randomize button
+    var randomize_button = document.getElementById("randomize_button");
+    randomize_button.addEventListener("click", on_randomize_button_clicked, false);
 
     // view button
     var view_button = document.getElementById("view_button");
