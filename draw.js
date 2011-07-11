@@ -7,6 +7,8 @@ var OUTPUT_DISC_SIZE = 100;   // diameter in mm
 var OUTPUT_DPI = 600;         // dpi
 var DISC_CANVAS_MARGIN = 30;  // px
 
+var max_stroke_length = 100;  // px
+
 function StrokeManager() {
     var strokes_ = [];
     var is_stroking_ = false;
@@ -95,6 +97,30 @@ function update_stroke_on(canvas, x, y) {
         ctx.lineJoin = "round";
         sm.draw_current_stroke(ctx);
     }
+}
+
+function hash_strokes(strokes, max_length) {
+    var hashed = [];
+    var i;
+    for (i = 0; i < strokes.length; ++i) {
+        var s = strokes[i];
+
+        var length = 0;
+        var start_index = 0;
+        var j;
+        for (j = 1; j < s.length; ++j) {
+            length += Math.sqrt(
+                (s[j][0] - s[j - 1][0]) * (s[j][0] - s[j - 1][0]) +
+                (s[j][1] - s[j - 1][1]) * (s[j][1] - s[j - 1][1]));
+            if (length > max_length || j === s.length - 1) {
+                hashed.push(s.slice(start_index, j + 1));
+                length = 0;
+                start_index = j;
+            };
+        }
+    }
+
+    return hashed;
 }
 
 function draw_disc(canvas, margin) {
@@ -197,6 +223,7 @@ function draw_disc(canvas, margin) {
         var canvas_id = "char_canvas" + (i + 1).toString();
         var char_canvas = document.getElementById(canvas_id);
         var strokes = stroke_managers[canvas_id].get_strokes();
+        strokes = hash_strokes(strokes, max_stroke_length);
 
         var j;
         for (j = 0; j < strokes.length; ++j) {
@@ -373,6 +400,20 @@ function create_disc_image(size_in_mm, dpi) {
     return canvas.toDataURL("image/png");
 }
 
+function on_shorten_button_clicked(e) {
+    max_stroke_length = Math.max(max_stroke_length - 20, 20);
+
+    var disc_canvas = document.getElementById("disc_canvas");
+    draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
+}
+
+function on_lengthen_button_clicked(e) {
+    max_stroke_length = Math.min(max_stroke_length + 20, 400);
+
+    var disc_canvas = document.getElementById("disc_canvas");
+    draw_disc(disc_canvas, DISC_CANVAS_MARGIN);
+}
+
 function on_view_button_clicked(e) {
     var dataUrl = create_disc_image(OUTPUT_DISC_SIZE, OUTPUT_DPI);
     window.location = dataUrl;
@@ -422,6 +463,14 @@ function on_window_loaded(e) {
     }
     var reset_all_button = document.getElementById("reset_all_button");
     reset_all_button.addEventListener("click", on_reset_all_button_clicked, false);
+
+    // shorten button
+    var shorten_button = document.getElementById("shorten_button");
+    shorten_button.addEventListener("click", on_shorten_button_clicked, false);
+
+    // lengthen button
+    var lengthen_button = document.getElementById("lengthen_button");
+    lengthen_button.addEventListener("click", on_lengthen_button_clicked, false);
 
     // view button
     var view_button = document.getElementById("view_button");
