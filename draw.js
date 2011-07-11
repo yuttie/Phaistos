@@ -112,7 +112,7 @@ function hash_strokes(strokes, max_length) {
             length += Math.sqrt(
                 (s[j][0] - s[j - 1][0]) * (s[j][0] - s[j - 1][0]) +
                 (s[j][1] - s[j - 1][1]) * (s[j][1] - s[j - 1][1]));
-            if (length > max_length || j == s.length - 1) {
+            if (length > max_length || j === s.length - 1) {
                 hashed.push(s.slice(start_index, j + 1));
                 length = 0;
                 start_index = j;
