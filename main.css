@@ -1,11 +1,12 @@
-body {
-    width: 1536px;
-    height: 1024px;
-}
-
-canvas {
+* {
     margin: 0;
     padding: 0;
+}
+
+body {
+    padding: 8px;
+    width:  1520px;  /* 1536 - 2 * padding */
+    height: 1008px;  /* 1024 - 2 * padding */
 }
 
 canvas.char_canvas {
@@ -18,21 +19,22 @@ canvas.char_canvas:hover {
     border: 1px solid red;
 }
 
+#title_header {
+    margin: 8px;
+}
+
 #input_pane {
-    padding: 0;
     position: absolute;
     width: 470px;
 }
 
 #reset_pane {
-    padding: 0;
     position: absolute;
     width: 280px;
     margin-left: 480px;
 }
 
 #output_pane {
-    padding: 0;
     margin-left: 770px;
 }
 
