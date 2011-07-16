@@ -399,11 +399,11 @@ function on_window_loaded(e) {
     // set title header
     var platform = is_platform_mobile() ? "MOBILE" : "DESKTOP";
 
-    var title_header = document.getElementById("title_header");
-    title_header.innerHTML += ' <span style="font-size: small">'
-                            + "(Ver. " + VERSION_STRING + ";"
-                            + " " + platform + " mode)"
-                            + "</span>";
+    var title = document.getElementById("title");
+    title.innerHTML += ' <span style="font-size: small">'
+                     + "(Ver. " + VERSION_STRING + ";"
+                     + " " + platform + " mode)"
+                     + "</span>";
 
     // install stroke handlers
     var char_canvases = document.getElementsByClassName("char_canvas");

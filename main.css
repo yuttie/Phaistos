@@ -19,8 +19,13 @@ canvas.char_canvas:hover {
     border: 1px solid red;
 }
 
-#title_header {
+#header {
     margin: 8px;
+}
+
+#title {
+    font-size: 36px;
+    font-weight: bold;
 }
 
 #input_pane {
