@@ -74,6 +74,8 @@ function begin_stroke_on(canvas, x, y) {
 
     // clear the canvas and draw the past strokes with black color
     var ctx = canvas.getContext('2d');
+    ctx.save();
+
     ctx.strokeStyle = "black";
     ctx.lineWidth = STROKE_WIDTH;
     ctx.lineCap = "round";
@@ -81,6 +83,8 @@ function begin_stroke_on(canvas, x, y) {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     sm.draw_existing_strokes(ctx);
+
+    ctx.restore();
 }
 
 function update_stroke_on(canvas, x, y) {
@@ -89,11 +93,15 @@ function update_stroke_on(canvas, x, y) {
         sm.update(x, y);
 
         var ctx = canvas.getContext('2d');
+        ctx.save();
+
         ctx.strokeStyle = "red";
         ctx.lineWidth = STROKE_WIDTH;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
         sm.draw_current_stroke(ctx);
+
+        ctx.restore();
     }
 }
 
