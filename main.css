@@ -3,24 +3,17 @@
     padding: 0;
 }
 
+/* <body> and its contents */
 body {
     padding: 8px;
     width:  1520px;  /* 1536 - 2 * padding */
     height: 1008px;  /* 1024 - 2 * padding */
 }
 
-canvas.char_canvas {
-    margin: 8px;
-    border: 1px dashed black;
-}
-
-canvas.char_canvas:hover {
-    margin: 8px;
-    border: 1px solid red;
-}
-
+/* #header and its contents */
 #header {
     margin: 8px;
+    height: 56px;
 }
 
 #title {
@@ -28,34 +21,60 @@ canvas.char_canvas:hover {
     font-weight: bold;
 }
 
-#input_pane {
+/* #content and its contents */
+/* normal mode */
+#content {
+    position: relative;
+    height: 936px;
+}
+
+#char_canvas_panel {
     position: absolute;
     width: 470px;
 }
 
-#reset_pane {
+#char_canvas_panel > * {
+    margin: 8px;
+}
+
+canvas.char_canvas {
+    border: 1px dashed black;
+}
+
+canvas.char_canvas:hover {
+    border: 1px solid red;
+}
+
+#reset_button_panel {
     position: absolute;
     width: 280px;
     margin-left: 480px;
 }
 
-#output_pane {
+#reset_button_panel > * {
+    margin: 4px 0 4px 0;
+}
+
+#output_panel {
     margin-left: 770px;
 }
 
+#control_panel > * {
+    margin: 4px 0 4px 0;
+}
+
+/*
+ * basic styles
+ */
 span.emph {
     font-size: xx-large;
 }
 
-/* styles common to buttons */
 button {
-    margin: 4px 0 4px 0;
     font-size: 24px;
     font-weight: bold;
-    color: white;
     text-shadow: rgba(0, 0, 0, 0.2) 1px 1px 1px;
     text-align: center;
-    vertical-align: middle;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -69,48 +88,49 @@ button:hover {
     -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
 button:active {
-    background: #90c200;
     box-shadow:         inset 1px 1px 4px rgba(0, 0, 0, 0.3);
     -moz-box-shadow:    inset 1px 1px 4px rgba(0, 0, 0, 0.3);
     -webkit-box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* normal button (green) */
-.normal_button {
+button.normal {
+    color: white;
     background: #9c0;
     border: 1px solid #8ab800;
 }
-.normal_button:hover {
+button.normal:hover {
     border: 1px solid #680;
 }
-.normal_button:active {
+button.normal:active {
     background: #8ab800;
 }
 
 /* dangerous button (red) */
-.dangerous_button {
+button.dangerous {
+    color: white;
     background: #c30;
     border: 1px solid #b82e00;
 }
-.dangerous_button:hover {
+button.dangerous:hover {
     border: 1px solid #820;
 }
-.dangerous_button:active {
+button.dangerous:active {
     background: #b82e00;
 }
 
-/* output buttons */
-.output_button {
-    width: 370px;
-    height: 72px;
-}
-
 /* reset buttons */
-.reset_button {
+button.reset.size_1x1 {
     width: 135px;
     height: 135px;
 }
-#reset_all_button {
+button.reset.size_2x1 {
     width: 278px;
     height: 135px;
+}
+
+/* control buttons */
+button.control {
+    width: 370px;
+    height: 60px;
 }

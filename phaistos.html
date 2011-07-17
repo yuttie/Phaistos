@@ -10,36 +10,39 @@
     <div id="header">
       <span id="title">暗号円盤メイカー</span>
     </div>
-    <div id="input_pane">
-      <canvas id="char_canvas1" class="char_canvas" width="210" height="210"></canvas>
-      <canvas id="char_canvas2" class="char_canvas" width="210" height="210"></canvas>
-      <canvas id="char_canvas3" class="char_canvas" width="210" height="210"></canvas>
-      <canvas id="char_canvas4" class="char_canvas" width="210" height="210"></canvas>
-      <canvas id="char_canvas5" class="char_canvas" width="210" height="210"></canvas>
-      <canvas id="char_canvas6" class="char_canvas" width="210" height="210"></canvas>
-      <canvas id="char_canvas7" class="char_canvas" width="210" height="210"></canvas>
-      <canvas id="char_canvas8" class="char_canvas" width="210" height="210"></canvas>
-    </div>
-    <div id="reset_pane">
-      <button id="reset_button1" class="dangerous_button reset_button">リセット</button>
-      <button id="reset_button2" class="dangerous_button reset_button">リセット</button>
-      <button id="reset_button3" class="dangerous_button reset_button">リセット</button>
-      <button id="reset_button4" class="dangerous_button reset_button">リセット</button>
-      <button id="reset_button5" class="dangerous_button reset_button">リセット</button>
-      <button id="reset_button6" class="dangerous_button reset_button">リセット</button>
-      <button id="reset_button7" class="dangerous_button reset_button">リセット</button>
-      <button id="reset_button8" class="dangerous_button reset_button">リセット</button>
-      <button id="reset_all_button" class="dangerous_button">全部の文字を<br />リセットする</button>
-    </div>
-    <div id="output_pane">
-      <canvas id="disc_canvas" width="760" height="760"></canvas>
-      <div>
-        <button id="view_button" class="normal_button output_button">
-          円盤画像を<span class="emph">表示する</span>
-        </button>
-        <button id="save_button" class="normal_button output_button">
-          円盤画像を<span class="emph">保存する</span>
-        </button>
+    <div id="content">
+      <!-- normal mode -->
+      <div id="char_canvas_panel">
+        <canvas id="char_canvas1" class="char_canvas" width="210" height="210"></canvas>
+        <canvas id="char_canvas2" class="char_canvas" width="210" height="210"></canvas>
+        <canvas id="char_canvas3" class="char_canvas" width="210" height="210"></canvas>
+        <canvas id="char_canvas4" class="char_canvas" width="210" height="210"></canvas>
+        <canvas id="char_canvas5" class="char_canvas" width="210" height="210"></canvas>
+        <canvas id="char_canvas6" class="char_canvas" width="210" height="210"></canvas>
+        <canvas id="char_canvas7" class="char_canvas" width="210" height="210"></canvas>
+        <canvas id="char_canvas8" class="char_canvas" width="210" height="210"></canvas>
+      </div>
+      <div id="reset_button_panel">
+        <button id="reset_button1" class="dangerous reset size_1x1">リセット</button>
+        <button id="reset_button2" class="dangerous reset size_1x1">リセット</button>
+        <button id="reset_button3" class="dangerous reset size_1x1">リセット</button>
+        <button id="reset_button4" class="dangerous reset size_1x1">リセット</button>
+        <button id="reset_button5" class="dangerous reset size_1x1">リセット</button>
+        <button id="reset_button6" class="dangerous reset size_1x1">リセット</button>
+        <button id="reset_button7" class="dangerous reset size_1x1">リセット</button>
+        <button id="reset_button8" class="dangerous reset size_1x1">リセット</button>
+        <button id="reset_all_button" class="dangerous reset size_2x1">全部の文字を<br />リセットする</button>
+      </div>
+      <div id="output_panel">
+        <canvas id="disc_canvas" width="760" height="760"></canvas>
+        <div id="control_panel">
+          <button id="view_button" class="normal control">
+            円盤画像を<span class="emph">表示する</span>
+          </button>
+          <button id="save_button" class="normal control">
+            円盤画像を<span class="emph">保存する</span>
+          </button>
+        </div>
       </div>
     </div>
   </body>

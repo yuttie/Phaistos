@@ -423,7 +423,8 @@ function on_window_loaded(e) {
     }
 
     // reset buttons
-    var reset_buttons = document.getElementsByClassName("reset_button");
+    var reset_button_panel = document.getElementById("reset_button_panel");
+    var reset_buttons = reset_button_panel.getElementsByClassName("reset size_1x1");
     for (i = 0; i < reset_buttons.length; ++i) {
         var b = reset_buttons[i];
         b.addEventListener("click", on_reset_button_clicked, false);
