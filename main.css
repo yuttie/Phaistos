@@ -29,7 +29,7 @@ body {
 }
 
 #char_canvas_panel {
-    position: absolute;
+    float: left;
     width: 470px;
 }
 
@@ -46,9 +46,8 @@ canvas.char_canvas:hover {
 }
 
 #reset_button_panel {
-    position: absolute;
+    float: left;
     width: 280px;
-    margin-left: 480px;
 }
 
 #reset_button_panel > * {
@@ -56,7 +55,7 @@ canvas.char_canvas:hover {
 }
 
 #output_panel {
-    margin-left: 770px;
+    float: left;
 }
 
 #control_panel > * {
