@@ -381,6 +381,53 @@ function create_disc_image(size_in_mm, dpi) {
     return canvas.toDataURL("image/png");
 }
 
+function on_mode_toggle_button_clicked(e) {
+    var print_view = document.getElementById("print_view");
+    if (print_view.style.visibility === "hidden") {
+        // update the print view
+        var char_canvases = document.getElementsByClassName("char_canvas");
+        var i;
+        for (i = 0; i < char_canvases.length; ++i) {
+            var c = char_canvases[i];
+            var sm = stroke_managers[c.id];
+
+            var print_canvas = document.getElementById("print_" + c.id);
+            var ctx = print_canvas.getContext('2d');
+            ctx.save();
+
+            ctx.clearRect(0, 0, print_canvas.width, print_canvas.height);
+
+            ctx.scale(print_canvas.width / c.width,
+                      print_canvas.height / c.height);
+
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = STROKE_WIDTH;
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+
+            sm.draw_existing_strokes(ctx);
+
+            ctx.restore();
+        }
+
+        var print_disc_canvas = document.getElementById("print_disc_canvas");
+        draw_disc(print_disc_canvas, 0);
+
+        // make the view visible and set the next mode name
+        print_view.style["visibility"] = "visible";
+
+        var next_mode_name = document.getElementById("next_mode_name");
+        next_mode_name.innerHTML = "標準モード";
+    }
+    else {
+        // hide the view and set the next mode name
+        print_view.style["visibility"] = "hidden";
+
+        var next_mode_name = document.getElementById("next_mode_name");
+        next_mode_name.innerHTML = "印刷モード";
+    }
+}
+
 function on_view_button_clicked(e) {
     var dataUrl = create_disc_image(OUTPUT_DISC_SIZE, OUTPUT_DPI);
     window.location = dataUrl;
@@ -421,6 +468,10 @@ function on_window_loaded(e) {
             c.addEventListener("mouseup",   on_char_canvas_mouseup, false);
         }
     }
+
+    // mode toggle button
+    var mode_toggle_button = document.getElementById("mode_toggle_button");
+    mode_toggle_button.addEventListener("click", on_mode_toggle_button_clicked, false);
 
     // reset buttons
     var reset_button_panel = document.getElementById("reset_button_panel");

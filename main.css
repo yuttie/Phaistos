@@ -21,6 +21,11 @@ body {
     font-weight: bold;
 }
 
+#mode_toggle_button {
+    width: 380px;
+    height: 48px;
+}
+
 /* #content and its contents */
 /* normal mode */
 #content {
@@ -60,6 +65,27 @@ canvas.char_canvas:hover {
 
 #control_panel > * {
     margin: 4px 0 4px 0;
+}
+
+/* print mode */
+#print_view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    background-color: white;
+}
+
+#print_char_canvas_panel {
+    position: absolute;
+    width: 210px;
+}
+
+#print_disc_canvas {
+    position: absolute;
+    margin-left: 220px;
 }
 
 /*
