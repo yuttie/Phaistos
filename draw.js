@@ -1,6 +1,6 @@
 "use strict";
 
-var VERSION_STRING = "0.4+";
+var VERSION_STRING = "0.5";
 
 var STROKE_WIDTH = 8;         // px
 var OUTPUT_DISC_SIZE = 100;   // diameter in mm
