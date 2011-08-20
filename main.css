@@ -61,6 +61,7 @@ canvas.char_canvas:hover {
 
 #output_panel {
     float: left;
+    width: 760px;
 }
 
 #control_panel > * {
